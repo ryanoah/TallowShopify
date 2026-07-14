@@ -1,0 +1,67 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Tallow Basics",
+    "theme_version": "1.0.0",
+    "theme_author": "Custom",
+    "theme_documentation_url": "https://shopify.dev/docs/storefronts/themes",
+    "theme_support_email": "support@example.com"
+  },
+  {
+    "name": "Logo & Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "Will be scaled down to 32 x 32px"
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background",
+        "default": "#FBF6EF"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text",
+        "default": "#3A2E26"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent (buttons, links)",
+        "default": "#7A5C3E"
+      },
+      {
+        "type": "color",
+        "id": "color_accent_text",
+        "label": "Accent text (on buttons)",
+        "default": "#FBF6EF"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Heading font",
+        "default": "playfair_display_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body font",
+        "default": "assistant_n4"
+      }
+    ]
+  }
+]

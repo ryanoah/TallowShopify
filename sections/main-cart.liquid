@@ -1,0 +1,54 @@
+<section class="cart">
+  <div class="container">
+    <h1 class="cart__heading">Your Cart</h1>
+
+    {%- if cart.item_count > 0 -%}
+      <form action="{{ routes.cart_url }}" method="post" id="CartForm">
+        <table class="cart__table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for item in cart.items -%}
+              <tr>
+                <td class="cart__item-product">
+                  <a href="{{ item.url }}" class="cart__item-title">{{ item.product.title }}</a>
+                  {%- unless item.product.has_only_default_variant -%}
+                    <span class="cart__item-variant">{{ item.variant.title }}</span>
+                  {%- endunless -%}
+                </td>
+                <td>{{ item.price | money }}</td>
+                <td>
+                  <input type="number" name="updates[{{ item.key }}]" value="{{ item.quantity }}" min="0">
+                </td>
+                <td>{{ item.line_price | money }}</td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+
+        <div class="cart__footer">
+          <span class="cart__subtotal">Subtotal: {{ cart.total_price | money }}</span>
+          <div class="cart__actions">
+            <button type="submit" name="update" class="button button--secondary">Update cart</button>
+            <button type="submit" name="checkout" class="button button--primary">Checkout</button>
+          </div>
+        </div>
+      </form>
+    {%- else -%}
+      <p class="cart__empty">Your cart is empty. <a href="{{ routes.all_products_collection_url }}">Continue shopping &rarr;</a></p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Cart page",
+  "settings": []
+}
+{% endschema %}

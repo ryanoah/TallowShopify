@@ -1,0 +1,72 @@
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__block">
+      <span class="site-footer__brand">{{ shop.name }}</span>
+      {%- if section.settings.tagline != blank -%}
+        <p class="site-footer__tagline">{{ section.settings.tagline }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.menu.links.size > 0 -%}
+      <nav class="site-footer__nav" aria-label="Footer navigation">
+        {%- for link in section.settings.menu.links -%}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+
+    <div class="site-footer__social">
+      {%- if section.settings.instagram_url != blank -%}
+        <a href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener">Instagram</a>
+      {%- endif -%}
+      {%- if section.settings.facebook_url != blank -%}
+        <a href="{{ section.settings.facebook_url }}" target="_blank" rel="noopener">Facebook</a>
+      {%- endif -%}
+      {%- if section.settings.email != blank -%}
+        <a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="container site-footer__bottom">
+    <small>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</small>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Small-batch tallow balm, made by hand."
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Footer menu"
+    },
+    {
+      "type": "header",
+      "content": "Contact & social"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Contact email"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    }
+  ]
+}
+{% endschema %}

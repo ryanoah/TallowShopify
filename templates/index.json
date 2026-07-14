@@ -1,0 +1,24 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "heading": "Handmade tallow balm, straight from the farm",
+        "subheading": "Simple, nourishing skincare made in small batches with grass-fed tallow and clean ingredients.",
+        "button_label": "Shop the collection",
+        "button_url": "/collections/all"
+      }
+    },
+    "story": {
+      "type": "story",
+      "settings": {
+        "heading": "Our Story",
+        "body": "<p>[Replace this with her story: how she got started making tallow balm, her background, why she cares about clean ingredients, and what makes this product different. A few short paragraphs works best.]</p>",
+        "image_position": "left",
+        "button_label": "Shop the collection",
+        "button_url": "/collections/all"
+      }
+    }
+  },
+  "order": ["hero", "story"]
+}

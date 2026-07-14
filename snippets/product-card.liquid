@@ -1,0 +1,55 @@
+{%- comment -%}
+  Renders a single product card.
+  Accepts: product (object)
+{%- endcomment -%}
+
+<div class="product-card">
+  <a href="{{ product.url }}" class="product-card__media">
+    {%- if product.featured_image != blank -%}
+      <img
+        src="{{ product.featured_image | image_url: width: 700 }}"
+        alt="{{ product.featured_image.alt | default: product.title }}"
+        width="{{ product.featured_image.width }}"
+        height="{{ product.featured_image.height }}"
+        loading="lazy"
+        class="product-card__image"
+      >
+    {%- else -%}
+      <div class="product-card__placeholder">
+        {{ 'product-1' | placeholder_svg_tag: 'product-card__placeholder-svg' }}
+        <span class="product-card__placeholder-label">Add a photo to this product in Shopify admin</span>
+      </div>
+    {%- endif -%}
+  </a>
+
+  <div class="product-card__info">
+    <a href="{{ product.url }}" class="product-card__title">{{ product.title }}</a>
+
+    {%- if product.description != blank -%}
+      <p class="product-card__description">{{ product.description | strip_html | truncate: 100 }}</p>
+    {%- endif -%}
+
+    <div class="product-card__footer">
+      <span class="product-card__price">
+        {%- if product.price_varies -%}
+          From {{ product.price_min | money }}
+        {%- else -%}
+          {{ product.price | money }}
+        {%- endif -%}
+      </span>
+
+      {%- if product.available -%}
+        {%- if product.has_only_default_variant -%}
+          {%- form 'product', product -%}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <button type="submit" class="button button--small">Add to cart</button>
+          {%- endform -%}
+        {%- else -%}
+          <a href="{{ product.url }}" class="button button--small button--secondary">Choose options</a>
+        {%- endif -%}
+      {%- else -%}
+        <span class="product-card__sold-out">Sold out</span>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

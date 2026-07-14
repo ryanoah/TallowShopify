@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="{{ settings.color_background }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+    {%- style -%}
+      {{ settings.font_heading | font_face: font_display: 'swap' }}
+      {{ settings.font_body | font_face: font_display: 'swap' }}
+
+      :root {
+        --color-background: {{ settings.color_background }};
+        --color-text: {{ settings.color_text }};
+        --color-accent: {{ settings.color_accent }};
+        --color-accent-text: {{ settings.color_accent_text }};
+        --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
+        --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+      }
+    {%- endstyle -%}
+
+    {{ content_for_header }}
+  </head>
+
+  <body>
+    <a class="skip-to-content" href="#MainContent">Skip to content</a>
+
+    {% section 'header' %}
+
+    <main id="MainContent" role="main">
+      {{ content_for_layout }}
+    </main>
+
+    {% section 'footer' %}
+  </body>
+</html>

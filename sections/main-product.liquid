@@ -1,0 +1,138 @@
+<section class="product">
+  <div class="container product__inner">
+    <div class="product__media">
+      {%- if product.featured_image != blank -%}
+        <img
+          id="ProductMainImage"
+          src="{{ product.featured_image | image_url: width: 1200 }}"
+          alt="{{ product.featured_image.alt | default: product.title }}"
+          width="{{ product.featured_image.width }}"
+          height="{{ product.featured_image.height }}"
+          loading="eager"
+          class="product__image"
+        >
+        {%- if product.images.size > 1 -%}
+          <div class="product__thumbnails">
+            {%- for image in product.images -%}
+              <button type="button" class="product__thumbnail" data-full-src="{{ image | image_url: width: 1200 }}">
+                <img
+                  src="{{ image | image_url: width: 200 }}"
+                  alt="{{ image.alt | default: product.title }}"
+                  width="200"
+                  height="{{ 200 | divided_by: image.aspect_ratio | default: 200 }}"
+                  loading="lazy"
+                >
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      {%- else -%}
+        <div class="product__placeholder">
+          {{ 'product-1' | placeholder_svg_tag: 'product__placeholder-svg' }}
+          <span class="product__placeholder-label">Add photos to this product in Shopify admin</span>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="product__info">
+      <h1 class="product__title">{{ product.title }}</h1>
+
+      <div class="product__price">
+        {%- if product.price_varies -%}
+          From {{ product.price_min | money }}
+        {%- else -%}
+          {{ product.price | money }}
+        {%- endif -%}
+      </div>
+
+      {%- if product.description != blank -%}
+        <div class="product__description rte">{{ product.description }}</div>
+      {%- endif -%}
+
+      {%- form 'product', product, id: 'ProductForm' -%}
+        {%- unless product.has_only_default_variant -%}
+          {%- for option in product.options_with_values -%}
+            <div class="product__option">
+              <label for="option-{{ option.position }}">{{ option.name }}</label>
+              <select name="options[{{ option.name | escape }}]" id="option-{{ option.position }}">
+                {%- for value in option.values -%}
+                  <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>{{ value }}</option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- endfor -%}
+        {%- endunless -%}
+
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="ProductSelectedVariant">
+
+        <div class="product__quantity">
+          <label for="Quantity">Quantity</label>
+          <input type="number" id="Quantity" name="quantity" value="1" min="1">
+        </div>
+
+        <button type="submit" class="button button--primary button--full" {% unless product.available %}disabled{% endunless %}>
+          {%- if product.available -%}
+            Add to cart
+          {%- else -%}
+            Sold out
+          {%- endif -%}
+        </button>
+      {%- endform -%}
+    </div>
+  </div>
+</section>
+
+{%- unless product.has_only_default_variant -%}
+  <script type="application/json" id="ProductVariants-{{ product.id }}">
+    {{ product.variants | json }}
+  </script>
+  <script>
+    (function () {
+      var variants = JSON.parse(document.getElementById('ProductVariants-{{ product.id }}').textContent);
+      var form = document.getElementById('ProductForm');
+      var selects = form.querySelectorAll('select[name^="options"]');
+      var hiddenInput = document.getElementById('ProductSelectedVariant');
+      var priceEl = document.querySelector('.product__price');
+      var submitButton = form.querySelector('button[type="submit"]');
+
+      function currentOptions() {
+        return Array.prototype.map.call(selects, function (select) {
+          return select.value;
+        });
+      }
+
+      function findVariant() {
+        var options = currentOptions();
+        return variants.find(function (variant) {
+          return variant.options.every(function (value, index) {
+            return value === options[index];
+          });
+        });
+      }
+
+      function formatMoney(cents) {
+        return '$' + (cents / 100).toFixed(2);
+      }
+
+      function updateForVariant() {
+        var variant = findVariant();
+        if (!variant) return;
+        hiddenInput.value = variant.id;
+        if (priceEl) priceEl.textContent = formatMoney(variant.price);
+        submitButton.disabled = !variant.available;
+        submitButton.textContent = variant.available ? 'Add to cart' : 'Sold out';
+      }
+
+      selects.forEach(function (select) {
+        select.addEventListener('change', updateForVariant);
+      });
+    })();
+  </script>
+{%- endunless -%}
+
+{% schema %}
+{
+  "name": "Product page",
+  "settings": []
+}
+{% endschema %}

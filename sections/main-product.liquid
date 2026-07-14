@@ -82,6 +82,22 @@
   </div>
 </section>
 
+{%- if product.images.size > 1 -%}
+  <script>
+    (function () {
+      var mainImage = document.getElementById('ProductMainImage');
+      var thumbnails = document.querySelectorAll('.product__thumbnail');
+      if (!mainImage) return;
+
+      thumbnails.forEach(function (thumbnail) {
+        thumbnail.addEventListener('click', function () {
+          mainImage.src = thumbnail.getAttribute('data-full-src');
+        });
+      });
+    })();
+  </script>
+{%- endif -%}
+
 {%- unless product.has_only_default_variant -%}
   <script type="application/json" id="ProductVariants-{{ product.id }}">
     {{ product.variants | json }}
@@ -89,6 +105,7 @@
   <script>
     (function () {
       var variants = JSON.parse(document.getElementById('ProductVariants-{{ product.id }}').textContent);
+      var moneyFormat = {{ shop.money_format | json }};
       var form = document.getElementById('ProductForm');
       var selects = form.querySelectorAll('select[name^="options"]');
       var hiddenInput = document.getElementById('ProductSelectedVariant');
@@ -110,8 +127,30 @@
         });
       }
 
+      function formatWithDelimiters(cents, precision, thousands, decimal) {
+        var number = (cents / 100).toFixed(precision);
+        var parts = number.split('.');
+        var dollars = parts[0].replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1' + thousands);
+        return parts[1] ? dollars + decimal + parts[1] : dollars;
+      }
+
       function formatMoney(cents) {
-        return '$' + (cents / 100).toFixed(2);
+        var token = moneyFormat.match(/\{\{\s*(\w+)\s*\}\}/);
+        var value;
+        switch (token && token[1]) {
+          case 'amount_no_decimals':
+            value = formatWithDelimiters(cents, 0, ',', '.');
+            break;
+          case 'amount_with_comma_separator':
+            value = formatWithDelimiters(cents, 2, '.', ',');
+            break;
+          case 'amount_no_decimals_with_comma_separator':
+            value = formatWithDelimiters(cents, 0, '.', ',');
+            break;
+          default:
+            value = formatWithDelimiters(cents, 2, ',', '.');
+        }
+        return moneyFormat.replace(/\{\{\s*\w+\s*\}\}/, value);
       }
 
       function updateForVariant() {
